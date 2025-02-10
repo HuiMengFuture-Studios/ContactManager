@@ -5,6 +5,7 @@
   "scripts": {
     "start": "node ./bin/www"
   },
+  "license": "Apache-2.0",
   "author": {
     "name": "HuiMengFuture Network Technology Studio",
     "email": "service@huimengfuture.xyz",
