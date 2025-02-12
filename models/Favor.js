@@ -26,6 +26,14 @@ module.exports = (sequelize, DataTypes) => {
     isReturned: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    dueDate: { // 新增字段：借款截止时间
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    repaymentAttitude: { // 新增字段：还款态度
+      type: DataTypes.ENUM('good', 'bad'),
+      allowNull: true
     }
   });
 

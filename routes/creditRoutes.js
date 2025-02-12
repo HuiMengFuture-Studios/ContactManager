@@ -15,24 +15,20 @@ router.post('/calculate', async (req, res) => {
     let creditScore = 100;
 
     favors.forEach(favor => {
-      if (!favor.isReturned) {
-        creditScore -= 10; // 根据实际情况调整扣分规则
+      const now = new Date();
+      if (favor.status === 'pending' && now < favor.dueDate) {
+        creditScore -= 5; // 进行中的借款
+      } else if (favor.status === 'pending' && now >= favor.dueDate) {
+        creditScore -= 20; // 逾期未还
+      } else if (favor.status === 'completed' && favor.repaymentAttitude === 'good') {
+        creditScore -= 8; // 逾期已还，还款态度良好
+      } else if (favor.status === 'completed' && favor.repaymentAttitude === 'bad') {
+        creditScore -= 16; // 逾期已还，还款态度不佳
       }
     });
 
     await contact.update({ creditScore });
     res.status(200).json(contact);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
-// 获取个人信用评分
-router.get('/:id', async (req, res) => {
-  try {
-    const contact = await Contact.findByPk(req.params.id);
-    if (!contact) return res.status(404).json({ message: 'Contact not found' });
-    res.status(200).json({ creditScore: contact.creditScore });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -49,8 +45,15 @@ router.post('/calculateAll', async (req, res) => {
       let creditScore = 100;
 
       favors.forEach(favor => {
-        if (!favor.isReturned) {
-          creditScore -= 10; // 根据实际情况调整扣分规则
+        const now = new Date();
+        if (favor.status === 'pending' && now < favor.dueDate) {
+          creditScore -= 5; // 进行中的借款
+        } else if (favor.status === 'pending' && now >= favor.dueDate) {
+          creditScore -= 20; // 逾期未还
+        } else if (favor.status === 'completed' && favor.repaymentAttitude === 'good') {
+          creditScore -= 8; // 逾期已还，还款态度良好
+        } else if (favor.status === 'completed' && favor.repaymentAttitude === 'bad') {
+          creditScore -= 16; // 逾期已还，还款态度不佳
         }
       });
 
